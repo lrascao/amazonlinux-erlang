@@ -1,0 +1,18 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/golang:1.12.0-stretch
+    working_directory: ~/project
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+
+      # build and push Docker image
+      - run: |
+          TAG=19.3.0.ci$CIRCLE_BUILD_NUM
+          docker build --tag="lrascao/amazonlinux-erlang:$TAG" .
+          docker login -u $DOCKER_HUB_USER -p $DOCKER_HUB_PASSWORD
+          docker push lrascao/amazonlinux-erlang:$TAG 
+
